@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'abex.apps.AbexConfig',
+    'clickhousemodul',
+    'django_clickhouse'
 ]
 
 MIDDLEWARE = [
@@ -78,9 +80,9 @@ WSGI_APPLICATION = 'TestAbex.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'abexdb',
-        'USER': 'postgres',
-        'PASSWORD': 'den41k123',
+        'NAME': 'abextest',
+        'USER': 'myuser',
+        'PASSWORD': '123',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -129,3 +131,36 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'abex.User'
+
+
+
+
+# django-clickhouse library setup
+CLICKHOUSE_DATABASES = {
+    # Connection name to refer in using(...) method
+    'default': {
+        'db_name': 'abexclickdb',
+        'username': 'default',
+        'password': 'den41k123',
+        'URL': 'jdbc:clickhouse://localhost:8123/abexclickdb',
+        'migrate': True
+    }
+}
+CLICKHOUSE_REDIS_CONFIG = {
+    'host': '127.0.0.1',
+    'port': 6379,
+    'db': 8,
+    'socket_timeout': 10
+}
+CLICKHOUSE_CELERY_QUEUE = 'clickhouse'
+
+# If you have no any celerybeat tasks, define a new dictionary
+# More info: http://docs.celeryproject.org/en/v2.3.3/userguide/periodic-tasks.html
+from datetime import timedelta
+CELERYBEAT_SCHEDULE = {
+    'clickhouse_auto_sync': {
+        'task': 'django_clickhouse.tasks.clickhouse_auto_sync',
+        'schedule': timedelta(seconds=2),  # Every 2 seconds
+        'options': {'expires': 1, 'queue': CLICKHOUSE_CELERY_QUEUE}
+    }
+}
