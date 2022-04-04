@@ -26,3 +26,4 @@ class PointZeroView(ModelViewSet):
 class PointNonZeroView(ModelViewSet):
     serializer_class = UserSerializers
     queryset = User.objects.filter(point__gt=1000)
+

@@ -1,0 +1,31 @@
+1.python manage.py runserver
+2.celery -A TestAbex.celery beat
+
+postman
+Get:
+http://127.0.0.1:8000/api/user/  - get all users
+http://127.0.0.1:8000/api/transaction/ - get all transaction
+http://127.0.0.1:8000/api/type_of_service/ - get all type of service
+http://127.0.0.1:8000/api/get_zero_point/ - get all users with zero points
+http://127.0.0.1:8000/api/get_non_zero_point/ - get all users with 1000+ points
+
+
+Post:
+http://127.0.0.1:8000/api/user/ create  new user
+{
+    "username": "username",
+    "password": "password"
+}
+
+http://127.0.0.1:8000/api/transaction/  - create transaction
+{
+    "author": "2",
+    "type_of_service": "69"
+    "status": "accrual" or "write-off"
+}
+
+http://127.0.0.1:8000/api/type_of_service/ create new type of service
+{
+    "name": "name",
+    "point": "5"
+}

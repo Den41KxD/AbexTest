@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'abex.apps.AbexConfig',
     'clickhousemodul',
-    'django_clickhouse'
+    'django_clickhouse',
+
 ]
 
 MIDDLEWARE = [
@@ -133,8 +134,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'abex.User'
 
 
-
-
 # django-clickhouse library setup
 CLICKHOUSE_DATABASES = {
     # Connection name to refer in using(...) method
@@ -146,21 +145,14 @@ CLICKHOUSE_DATABASES = {
         'migrate': True
     }
 }
-CLICKHOUSE_REDIS_CONFIG = {
-    'host': '127.0.0.1',
-    'port': 6379,
-    'db': 8,
-    'socket_timeout': 10
-}
 CLICKHOUSE_CELERY_QUEUE = 'clickhouse'
 
-# If you have no any celerybeat tasks, define a new dictionary
-# More info: http://docs.celeryproject.org/en/v2.3.3/userguide/periodic-tasks.html
-from datetime import timedelta
-CELERYBEAT_SCHEDULE = {
-    'clickhouse_auto_sync': {
-        'task': 'django_clickhouse.tasks.clickhouse_auto_sync',
-        'schedule': timedelta(seconds=2),  # Every 2 seconds
-        'options': {'expires': 1, 'queue': CLICKHOUSE_CELERY_QUEUE}
-    }
-}
+# REDIS related settings
+CELERY_ALWAYS_EAGER=True
+CELERY_SEND_EVENTS=True
+REDIS_HOST = 'localhost'
+REDIS_PORT = '6379'
+BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+
